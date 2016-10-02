@@ -1,0 +1,94 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+namespace RestApi\FilesBundle\Entity;
+use Doctrine\ORM\Mapping as ORM;
+/**
+ * Description of File
+ *
+ * @author nairi
+ */
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="files")
+ */
+class File {
+    
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+    
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $name;
+    
+    /**
+    * @ORM\Column(type="string")
+    */
+    protected $href;
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     * @return File
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string 
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Set href
+     *
+     * @param string $href
+     * @return File
+     */
+    public function setHref($href)
+    {
+        $this->href = $href;
+
+        return $this;
+    }
+
+    /**
+     * Get href
+     *
+     * @return string 
+     */
+    public function getHref()
+    {
+        return $this->href;
+    }
+}

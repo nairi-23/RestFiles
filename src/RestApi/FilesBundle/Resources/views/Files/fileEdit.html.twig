@@ -1,0 +1,11 @@
+{#{% if id is defined %}
+    <div>
+        <input type='file' name='file' >
+        <input type='text' name='name'>
+        <button id='update'>Update</button>
+    </div>
+    <button id='delete' data={{ id }}>Delete file</button>
+{%endif%}
+<script src="{{ asset('js/script.js') }}"></script>
+
+#}

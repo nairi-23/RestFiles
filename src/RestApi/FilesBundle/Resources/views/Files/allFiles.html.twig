@@ -1,0 +1,28 @@
+{# empty Twig template #}
+{% if files is defined %}
+    <table>
+        <thead>
+            <tr>
+                <td>ID</td>
+                <td>File Name</td>
+                <td>File </td>
+                <td>Update Date</td> 
+                <td>Create Date</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% if files is defined %}
+                {% for file in files %}
+                    <tr>
+                        <td>{{ file.id }}</td>
+                        <td>{{ file.name }}</td>
+                        <td>{{ file.FileHashName }}
+                        </td>
+                        <td><a href="#">{{ file.updated | date('Y-m-d m:s:i')}}</a></td>
+                        <td><a href="#">{{ file.created | date('Y-m-d m:s:i')}}</a></td>
+                    </tr>
+                {%endfor%}
+            {% endif %}
+        </tbody>
+    </table>
+{% endif %}

@@ -1,0 +1,170 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+namespace RestApi\FilesBundle\Entity;
+use Doctrine\ORM\Mapping as ORM;
+/**
+ * Description of FileModel
+ *
+ * @author nairi
+ */
+
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="files")
+ */
+class FileModel {
+    
+    
+    protected $bioFile;
+
+    public function getfile()
+    {
+        return $this->bioFile;
+    }
+
+    public function setfile($File)
+    {
+        $this->bioFile = $File;
+
+        return $this;
+    }
+    
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+    
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $name;
+   
+    /**
+    * @ORM\Column(type="string")
+    */
+    protected $file_hash_name;
+    
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $created;
+    
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $updated;
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return FileModel
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    
+
+    /**
+     * Set file_hash_name
+     *
+     * @param string $fileHashName
+     * @return FileModel
+     */
+    public function setFileHashName($fileHashName)
+    {
+        $this->file_hash_name = $fileHashName;
+
+        return $this;
+    }
+
+    /**
+     * Get file_hash_name
+     *
+     * @return string 
+     */
+    public function getFileHashName()
+    {
+        return $this->file_hash_name;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return FileModel
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return FileModel
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+}

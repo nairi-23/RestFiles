@@ -1,0 +1,19 @@
+curl -v -H "Content-Type:multipart/form-data"  -F "someName={\"your\":\"json\"}; type=application/json"
+
+
+        
+curl -F  "file_model[biofile]=@Documents/curl.txt" -F " file_model[name]=hello" http://www.test.dev/files   // curl upload image 
+
+
+curl -XPOST -H 'Content-Type:application/json' -H ' --data-binary biofile=@Documents/a.log http://www.test.dev/files
+
+curl -XPOST -H 'Content-Type:application/json' -H 'Accept: application/json' --data-binary @Documents/curl.text http://www.test.dev/files/ -v -s
+
+
+
+
+
+
+
+
+curl -H "Content-Type: application/json" -X POST -d '{"username":"xyz","file":"@Documents/curl.txt"}' http://www.test.dev/files/

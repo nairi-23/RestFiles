@@ -1,0 +1,7 @@
+rest_api_files:
+    resource: "@RestApiFilesBundle/Resources/config/routing.yml"
+    prefix:   /
+    
+
+    
+

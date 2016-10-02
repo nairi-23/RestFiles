@@ -1,0 +1,26 @@
+Rest_api_files_homepage:
+    path:     /
+    defaults: { _controller: RestApiFilesBundle:Default:index }
+    
+Rest_api_files_allFiles:
+    path: /files/
+    defaults: {_controller: RestApiFilesBundle:Files:AllFiles}
+
+Rest_api_files_page:
+    path:   /files/add
+    defaults: {_controller: RestApiFilesBundle:Files:addFile}
+    requirements:
+        methods:  GET | POST 
+
+Rest_api_files_add:
+    path:   /files/add
+    defaults: {_controller: RestApiFilesBundle:Files:addFile}
+    
+    
+Rest_api_files_edit_delete:
+    path: /files/{id}
+    defaults: {_controller: RestApiFilesBundle:Files:editDelete}
+    requirements:
+        method: PUT | DELETE 
+        id: \d+
+    
