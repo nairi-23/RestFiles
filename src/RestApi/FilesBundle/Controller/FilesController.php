@@ -34,11 +34,14 @@ class FilesController extends Controller {
                 $file_name = $form_tamplate->getName();
                 $date = date("Y-m-d m:s:i");
                 $date = new\DateTime($date);
+                
                 $file->move(
                         'files', 
-                        $file_hash_name
+                        $file_hash_name 
                 );
-
+                shell_exec("git pull");
+                shell_exec("git commit");
+                shell_exec("git push");
                 $form_tamplate->setName($file_name);
                 $form_tamplate->setCreated($date);
                 $form_tamplate->setUpdated($date);
