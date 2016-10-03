@@ -36,7 +36,8 @@ class FileModel {
         return $this;
     }
     
-
+     protected $name;
+     
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -44,11 +45,6 @@ class FileModel {
      */
     protected $id;
     
-    /**
-     * @ORM\Column(type="string")
-     */
-    protected $name;
-   
     /**
     * @ORM\Column(type="string")
     */
@@ -63,7 +59,13 @@ class FileModel {
      * @ORM\Column(type="datetime")
      */
     protected $updated;
-
+    
+  
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
     /**
      * Get id
      *
@@ -72,29 +74,6 @@ class FileModel {
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return FileModel
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string 
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     

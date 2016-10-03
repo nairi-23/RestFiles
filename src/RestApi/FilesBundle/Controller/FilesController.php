@@ -13,6 +13,8 @@ use RestApi\FilesBundle\Entity\FileModel;
 use RestApi\FilesBundle\Form\FileModelType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 /**
  * Description of FilesController
@@ -21,51 +23,78 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class FilesController extends Controller {
 
-    public function addFileAction(Request $request) {
+    public function addFileAction($id = null, Request $request) {
 
-        $form_tamplate = new FileModel();
-        $form = $this->createForm(FileModelType::class, $form_tamplate);
-        $form->handleRequest($request);
-        if ($this->getRequest()->isMethod('POST')) {
-
-            $file = $form_tamplate->getFile();
-            if (!is_null($file)) {
-                $file_hash_name = md5(uniqid()) . '.' . $file->guessExtension();
-                $file_name = $form_tamplate->getName();
-                $date = date("Y-m-d m:s:i");
-                $date = new\DateTime($date);
-                
-                $file->move(
-                        'files', 
-                        $file_hash_name 
-                );
-                shell_exec("git pull");
-                shell_exec("git commit");
-                shell_exec("git push");
-                $form_tamplate->setName($file_name);
-                $form_tamplate->setCreated($date);
-                $form_tamplate->setUpdated($date);
-                $form_tamplate->setFileHashName($file_hash_name);
-
-                $em = $this->getDoctrine()->getManager();
-
-                $em->persist($form_tamplate);
-
-                $em->flush();
-                $message = "{'message':'File created'}";
-                return new Response($message);
-            }else{
-                $message = "{'message':'check your data property. file name - 'file model[file]' and name its -'file_model[name]'}";
-                return new Response($message);
-            }
+       
+        $process = new Process("git commit -a -m 'commit' && git push'");
+       try {
+            $process->setPty(true);
+            $process->mustRun(function ($type, $buffer) {
+                echo $buffer;
+            });
+            die();
+            //echo $process->getOutput();
+        } catch (ProcessFailedException $e) {
+            echo $e->getMessage();
+        }
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
         }
 
-        return $this->render('RestApiFilesBundle:Files:files.html.twig', array(
-                    'form' => $form->createView(),
-        ));
+        echo $process->getOutput(); die();
+        if ($request->isMethod('POST')) {
+            return $this->fileGeneratorAction($id, $request);
+        }
+
+        
     }
 
-    public function allFilesJSONAction() {
+    public function fileGeneratorAction($id = null, Request $request) {
+
+
+        $insert_data = new FileModel();
+        $form = $this->createForm(FileModelType::class, $insert_data);
+        $form->handleRequest($request);
+
+
+        $file = $insert_data->getFile();
+
+        if (!is_null($file)) {
+            $file_hash_name = md5(uniqid()) . '.' . $file->guessExtension();
+
+            $date = date("Y-m-d m:s:i");
+            $date = new\DateTime($date);
+
+            $file->move(
+                    'files', $file_hash_name
+            );
+
+            if (!is_null($id)) {
+                $em = $this->getDoctrine()->getManager();
+                $DBdata = $em->getRepository('RestApiFilesBundle:FileModel')->find($id);
+            } else {
+                $insert_data->setCreated($date);
+                $em = $this->getDoctrine()->getManager();
+            }
+
+            $insert_data->setUpdated($date);
+            $insert_data->setFileHashName($file_hash_name);
+
+
+
+
+            $em->persist($insert_data);
+
+            $em->flush();
+            $message = "{'message':'File created'}";
+            return new Response($message);
+        } else {
+            $message = "{'message':'Process ended'}";
+            return new Response($message);
+        }
+    }
+
+    public function AllFilesAction() {
 
         $allFiles = $this->getDoctrine()->getManager();
         $file = $allFiles->getRepository('RestApiFilesBundle:FileModel')->findAll();
@@ -74,61 +103,83 @@ class FilesController extends Controller {
         return new Response($response);
     }
 
-    public function AllFilesAction() {
+    public function ControlRequestAction($id, Request $request) {
 
-        $allFiles = $this->getDoctrine()->getManager();
-        $file = $allFiles->getRepository('RestApiFilesBundle:FileModel')->findAll();
 
-        return $this->render('RestApiFilesBundle:Files:allFiles.html.twig', array(
-                    'files' => $file,
-        ));
+
+        switch ($request) {
+            case $request->isMethod("DELETE"):
+                $this->deleteAction($id);
+                break;
+            case $request->isMethod("GET"):
+                $this->showFileAction($id);
+                break;
+            case $request->isMethod("PUT") || $request->isMethod("PATCH"):
+                $this->editAction($id, $request);
+                break;
+        }
     }
 
-    public function deleteAction($id, Request $request) {
-
+    public function deleteAction($id) {
+        
         if (!$id) {
-            throw $this->createNotFoundException('No id found');
+            throw $this->createNotFoundException('id not found');
         }
         $em = $this->getDoctrine()->getManager();
         $file = $em->getRepository('RestApiFilesBundle:FileModel')->find($id);
         if (!is_null($file)) {
-            $serializer = $this->get('jms_serializer');
-            $response = $serializer->serialize($file, 'json');
-            if ($request->isMethod("DELETE")) {
-                $em->remove($file);
-                $em->flush();
-                return new Response("Removed File" . $response);
-            } else {
-                return $this->editDeleteAction($id, $request);
-            }
+            $em->remove($file);
+            $em->flush();
+            unlink('files/' . $file->getFileHashName());
+            $message = "{'message':'Removed File" . $file->getFileHashName() . "'}";
+            echo $message;
+            die();
         } else {
-            $message = "{'message':'not exist file'}";
-            return new Response($message);
+            $message = "{'message':'File not exist'}";
+            echo $message;
+            die();
         }
     }
 
-    public function editDeleteAction($id, Request $request) {
+    public function editAction($id, $request) {
+        
+        $content = $request->getContent();
+        $em = $this->getDoctrine()->getManager();
+        $updated_data = $em->getRepository('RestApiFilesBundle:FileModel')->find($id);
+        if (!is_null($updated_data)) {
+            $date = date("Y-m-d m:s:i");
+            $date = new\DateTime($date);
 
-        if ($request->isMethod("DELETE")) {
-            return $this->deleteAction($id, $request);
-        } else if($request->isMethod("GET")){
-            $form_tamplate = new FileModel();
-            $form = $this->createForm(FileModelType::class, $form_tamplate);
-            $em = $this->getDoctrine()->getManager();
-            $file = $em->getRepository('RestApiFilesBundle:FileModel')->find($id);
-            if (!is_null($file)) {
-                $serializer = $this->get('jms_serializer');
-                $response = $serializer->serialize($file, 'json');
-                echo $response;
-                return $this->render("RestApiFilesBundle:Files:fileEdit.html.twig", array(
-                            'form' => $form->createView(), "id" => $id,
-                ));
-            } else {
-                $message = "{'message':'not exist file'}";
-                return new Response($message);
-            }
-        }else if($request->isMethod("PUT") || $request->isMethod("PATCH") || $request->isMethod("POST")){
-            var_dump($request);
+            $updated_data->setUpdated($date);
+            $fileName = $updated_data->getFileHashName();
+            $em->flush();
+            $file = fopen("files/" . $fileName . ".ext", "w");
+            $txt = $content;
+            fwrite($file, $txt);
+            fclose($file);
+            $message = "{'message':'File updated'}";
+            echo $message;
+            die();
+        } else {
+            $message = "{'message':'File not exist'}";
+            echo $message;
+            die();
+        }
+    }
+
+    public function showFileAction($id) {
+
+        $em = $this->getDoctrine()->getManager();
+        $file = $em->getRepository('RestApiFilesBundle:FileModel')->find($id);
+
+        if (!is_null($file)) {
+            $serializer = $this->get('jms_serializer');
+            $response = $serializer->serialize($file, 'json');
+            echo $response;
+            die();
+        } else {
+            $message = "{'message':'not exist file'}";
+            echo $message;
             die();
         }
     }

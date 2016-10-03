@@ -10,17 +10,13 @@ Rest_api_files_page:
     path:   /files/add
     defaults: {_controller: RestApiFilesBundle:Files:addFile}
     requirements:
-        methods:  GET | POST 
+        methods:  GET | POST | PUT
 
-Rest_api_files_add:
-    path:   /files/add
-    defaults: {_controller: RestApiFilesBundle:Files:addFile}
-    
-    
-Rest_api_files_edit_delete:
+Rest_api_files_edit:
     path: /files/{id}
-    defaults: {_controller: RestApiFilesBundle:Files:editDelete}
+    defaults: {_controller: RestApiFilesBundle:Files:ControlRequest}
     requirements:
-        method: PUT | DELETE 
+        method: PUT | PATCH | DELETE | GET 
         id: \d+
+
     
