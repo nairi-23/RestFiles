@@ -26,7 +26,7 @@ class FilesController extends Controller {
     public function addFileAction($id = null, Request $request) {
 
        
-        $process = new Process("git commit -a -m 'commit' && git push'");
+        $process = new Process(" git commit -a -m 'commit' && git push ");
        try {
             $process->setPty(true);
             $process->mustRun(function ($type, $buffer) {
