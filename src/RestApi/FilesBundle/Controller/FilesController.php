@@ -64,7 +64,7 @@ class FilesController extends Controller {
             $em->flush();
             $message = "{'message':'File created'}";
             echo $message."\n";
-            $process = new Process("git commit -a -m 'add file ".$file_hash_name."' && git push");
+            $process = new Process("git commit -a -m 'change' && git push");
                 try {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
