@@ -126,6 +126,7 @@ class FilesController extends Controller {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
                         echo $buffer;
+                        die();
                      });
                  } catch (ProcessFailedException $e) {
                   
@@ -155,7 +156,16 @@ class FilesController extends Controller {
             fclose($file);
             $message = "{'message':'File updated'}";
             echo $message;
-            die();
+            $process = new Process("git commit -a -m 'change' && git push");
+           
+                try {
+                    $process->setPty(true);
+                    $process->mustRun(function ($type, $buffer) {
+                        echo $buffer;
+                        die();
+                     });
+                 } catch (ProcessFailedException $e) {
+             }
         } else {
             $message = "{'message':'File not exist'}";
             echo $message;
