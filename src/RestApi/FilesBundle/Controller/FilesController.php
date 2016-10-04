@@ -161,7 +161,17 @@ class FilesController extends Controller {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
                         echo $buffer;
-                        die();
+                        $process2 = new Process("git push");
+                         try {
+                                $process2->setPty(true);
+                                $process2->mustRun(function ($type, $buffer) {
+                                    echo $buffer;
+                                    $process2 = new Process("git push");
+                                });
+                             } catch (ProcessFailedException $e) {
+                                 
+                         }
+                       
                      });
                  } catch (ProcessFailedException $e) {
              }
