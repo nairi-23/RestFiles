@@ -68,7 +68,7 @@ class FilesController extends Controller {
                 try {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
-                        echo $buffer;
+                        echo $buffer;die();
                      });
                  } catch (ProcessFailedException $e) {
                     echo $e->getMessage();
