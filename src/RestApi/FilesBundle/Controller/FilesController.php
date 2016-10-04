@@ -62,16 +62,27 @@ class FilesController extends Controller {
             $em->flush();
             $message = "{'message':'File created'}";
             echo $message."\n";
-            $process = new Process("git commit -a -m 'change' && git push");
+           $process = new Process("git commit -a -m 'commit'");
+           
                 try {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
                         echo $buffer;
-                        die();
+                        $process2 = new Process("git push");
+                         try {
+                                $process2->setPty(true);
+                                $process2->mustRun(function ($type, $buffer) {
+                                    echo $buffer;
+                                    $process2 = new Process("git push");
+                                    die();
+                                });
+                             } catch (ProcessFailedException $e) {
+                                 
+                         }
+                       
                      });
                  } catch (ProcessFailedException $e) {
-                    echo $e->getMessage();
-                }
+             }
         } else {
             $message = "{'message':'Process ended'}";
             return new Response($message);
@@ -119,17 +130,27 @@ class FilesController extends Controller {
             }
             $message = "{'message':'Removed File" . $file->getFileHashName() . "'}";
             echo $message."\n";
-            $process = new Process("git commit -a -m 'change' && git push");
+            $process = new Process("git commit -a -m 'commit'");
            
                 try {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
                         echo $buffer;
-                        die();
+                        $process2 = new Process("git push");
+                         try {
+                                $process2->setPty(true);
+                                $process2->mustRun(function ($type, $buffer) {
+                                    echo $buffer;
+                                    $process2 = new Process("git push");
+                                    die();
+                                });
+                             } catch (ProcessFailedException $e) {
+                                 
+                         }
+                       
                      });
                  } catch (ProcessFailedException $e) {
-                  
-                }
+             }
             die();
         } else {
             $message = "{'message':'File not exist'}";
