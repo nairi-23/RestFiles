@@ -155,7 +155,7 @@ class FilesController extends Controller {
             fclose($file);
             $message = "{'message':'File updated'}";
             echo $message;
-            $process = new Process("git commit -a -m 'change' && git push");
+            $process = new Process("git commit -a -m 'commit'");
            
                 try {
                     $process->setPty(true);
