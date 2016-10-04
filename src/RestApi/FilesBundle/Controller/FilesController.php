@@ -124,7 +124,7 @@ class FilesController extends Controller {
                 try {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
-                        echo json_encode($buffer);
+                        echo $buffer;
                         die();
                      });
                  } catch (ProcessFailedException $e) {
