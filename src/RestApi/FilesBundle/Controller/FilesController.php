@@ -167,6 +167,7 @@ class FilesController extends Controller {
                                 $process2->mustRun(function ($type, $buffer) {
                                     echo $buffer;
                                     $process2 = new Process("git push");
+                                    die();
                                 });
                              } catch (ProcessFailedException $e) {
                                  
