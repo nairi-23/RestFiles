@@ -68,7 +68,8 @@ class FilesController extends Controller {
                 try {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
-                        echo $buffer;die();
+                        echo $buffer;
+                        die();
                      });
                  } catch (ProcessFailedException $e) {
                     echo $e->getMessage();
@@ -151,7 +152,7 @@ class FilesController extends Controller {
             $updated_data->setUpdated($date);
             $fileName = $updated_data->getFileHashName();
             $em->flush();
-            $file = fopen("files/" . $fileName . "", "w");
+            $file = fopen("files/" . $fileName . ".txt", "w");
             fwrite($file, $content);
             fclose($file);
             $message = "{'message':'File updated'}";
