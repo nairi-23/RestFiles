@@ -48,15 +48,13 @@ class FilesController extends Controller {
             $file->move(
                     'files', $file_hash_name
             );
-
-            if (!is_null($id)) {
+             if (!is_null($id)) {
                 $em = $this->getDoctrine()->getManager();
                 $DBdata = $em->getRepository('RestApiFilesBundle:FileModel')->find($id);
             } else {
                 $insert_data->setCreated($date);
                 $em = $this->getDoctrine()->getManager();
             }
-
             $insert_data->setUpdated($date);
             $insert_data->setFileHashName($file_hash_name);
             $em->persist($insert_data);
@@ -126,7 +124,7 @@ class FilesController extends Controller {
                 try {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
-                        echo $buffer;
+                        echo json_encode($buffer);
                         die();
                      });
                  } catch (ProcessFailedException $e) {
