@@ -10,7 +10,7 @@ Rest_api_files_page:
     path:   /files/add
     defaults: {_controller: RestApiFilesBundle:Files:addFile}
     requirements:
-        methods:  GET | POST | PUT
+        methods:  GET | POST 
 
 Rest_api_files_edit:
     path: /files/{id}
@@ -18,5 +18,5 @@ Rest_api_files_edit:
     requirements:
         method: PUT | PATCH | DELETE | GET 
         id: \d+
-
-    
+        
+  

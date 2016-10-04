@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-
 /**
  * Description of FilesController
  *
@@ -23,30 +22,13 @@ use Symfony\Component\Process\Process;
  */
 class FilesController extends Controller {
 
+
+     
     public function addFileAction($id = null, Request $request) {
-
-       
-        $process = new Process(" git add -A && git commit 'commit' && git push ");
-       try {
-            $process->setPty(true);
-            $process->mustRun(function ($type, $buffer) {
-                echo $buffer;
-            });
-            die();
-            //echo $process->getOutput();
-        } catch (ProcessFailedException $e) {
-            echo $e->getMessage();
-        }
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        echo $process->getOutput(); die();
-        if ($request->isMethod('POST')) {
+        
+         if ($request->isMethod('POST')) {
             return $this->fileGeneratorAction($id, $request);
         }
-
-        
     }
 
     public function fileGeneratorAction($id = null, Request $request) {
@@ -55,8 +37,6 @@ class FilesController extends Controller {
         $insert_data = new FileModel();
         $form = $this->createForm(FileModelType::class, $insert_data);
         $form->handleRequest($request);
-
-
         $file = $insert_data->getFile();
 
         if (!is_null($file)) {
@@ -79,15 +59,20 @@ class FilesController extends Controller {
 
             $insert_data->setUpdated($date);
             $insert_data->setFileHashName($file_hash_name);
-
-
-
-
             $em->persist($insert_data);
 
             $em->flush();
             $message = "{'message':'File created'}";
-            return new Response($message);
+            echo $message."\n";
+            $process = new Process("git commit -m 'commit' && git push");
+                try {
+                    $process->setPty(true);
+                    $process->mustRun(function ($type, $buffer) {
+                        echo $buffer;
+                     });
+                 } catch (ProcessFailedException $e) {
+                    echo $e->getMessage();
+                }
         } else {
             $message = "{'message':'Process ended'}";
             return new Response($message);
@@ -95,17 +80,16 @@ class FilesController extends Controller {
     }
 
     public function AllFilesAction() {
-
+        
         $allFiles = $this->getDoctrine()->getManager();
         $file = $allFiles->getRepository('RestApiFilesBundle:FileModel')->findAll();
         $serializer = $this->get('jms_serializer');
         $response = $serializer->serialize($file, 'json');
         return new Response($response);
+        
     }
 
     public function ControlRequestAction($id, Request $request) {
-
-
 
         switch ($request) {
             case $request->isMethod("DELETE"):
@@ -121,7 +105,7 @@ class FilesController extends Controller {
     }
 
     public function deleteAction($id) {
-        
+
         if (!$id) {
             throw $this->createNotFoundException('id not found');
         }
@@ -130,9 +114,22 @@ class FilesController extends Controller {
         if (!is_null($file)) {
             $em->remove($file);
             $em->flush();
+            if(file_exists($file->getFileHashName())){
+                
             unlink('files/' . $file->getFileHashName());
+            }
             $message = "{'message':'Removed File" . $file->getFileHashName() . "'}";
             echo $message;
+            $process = new Process("git commit -m 'commit'");
+            $process2 = new Process("git push");
+                try {
+                    $process->setPty(true);
+                    $process->mustRun(function ($type, $buffer) {
+                        echo $buffer;
+                     });
+                 } catch (ProcessFailedException $e) {
+                  
+                }
             die();
         } else {
             $message = "{'message':'File not exist'}";
@@ -143,19 +140,18 @@ class FilesController extends Controller {
 
     public function editAction($id, $request) {
         
-        $content = $request->getContent();
+        $content = file_get_contents("php://input");
         $em = $this->getDoctrine()->getManager();
         $updated_data = $em->getRepository('RestApiFilesBundle:FileModel')->find($id);
         if (!is_null($updated_data)) {
             $date = date("Y-m-d m:s:i");
             $date = new\DateTime($date);
-
+      
             $updated_data->setUpdated($date);
             $fileName = $updated_data->getFileHashName();
             $em->flush();
-            $file = fopen("files/" . $fileName . ".ext", "w");
-            $txt = $content;
-            fwrite($file, $txt);
+            $file = fopen("files/" . $fileName . "", "w");
+            fwrite($file, $content);
             fclose($file);
             $message = "{'message':'File updated'}";
             echo $message;
