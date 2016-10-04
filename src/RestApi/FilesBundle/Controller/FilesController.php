@@ -119,8 +119,8 @@ class FilesController extends Controller {
             unlink('files/' . $file->getFileHashName());
             }
             $message = "{'message':'Removed File" . $file->getFileHashName() . "'}";
-            echo $message;
-            $process = new Process("git commit -a -m 'delete file ". $file->getFileHashName()." ' && git push");
+            echo $message."\n";
+            $process = new Process("git commit -a -m 'change' && git push");
            
                 try {
                     $process->setPty(true);
