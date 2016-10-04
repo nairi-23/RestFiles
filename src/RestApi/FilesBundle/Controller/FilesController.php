@@ -64,7 +64,7 @@ class FilesController extends Controller {
             $em->flush();
             $message = "{'message':'File created'}";
             echo $message."\n";
-            $process = new Process("git commit -m 'commit' && git push");
+            $process = new Process("git commit -a -m 'add file ".$file_hash_name."' && git push");
                 try {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
@@ -120,8 +120,8 @@ class FilesController extends Controller {
             }
             $message = "{'message':'Removed File" . $file->getFileHashName() . "'}";
             echo $message;
-            $process = new Process("git commit -m 'commit'");
-            $process2 = new Process("git push");
+            $process = new Process("git commit -a -m 'delete file ". $file->getFileHashName()." ' && git push");
+           
                 try {
                     $process->setPty(true);
                     $process->mustRun(function ($type, $buffer) {
