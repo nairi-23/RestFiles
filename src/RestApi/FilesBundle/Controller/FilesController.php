@@ -154,7 +154,7 @@ class FilesController extends Controller {
             fwrite($file, $content);
             fclose($file);
             $message = "{'message':'File updated'}";
-            echo $message;
+            echo $message."\n";
             $process = new Process("git commit -a -m 'commit'");
            
                 try {
